@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .book { margin-bottom: 20px; }
+        .book-title { font-size: 24px; font-weight: bold; cursor: pointer; }
+        .book-description { margin-top: 10px; }
+        .book-image { width: 150px; height: auto; }
+    </style>
+</head>
+<body>
+    <div id="book-list">
+
+    </div>
+
+    <script>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const books = JSON.parse(urlParams.get('books') || '[]');
+        const bookTitle = urlParams.get('bookTitle');
+        const bookDescription = urlParams.get('bookDescription');
+        const bookImageUrl = urlParams.get('bookImageUrl');
+        const bookRating = urlParams.get('bookRating');
+
+        const bookListElement = document.getElementById('book-list');
+
+        if (books.length > 0) {
+
+            books.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'book';
+                bookElement.innerHTML = `
+                    <div class="book-title" onclick="viewBook('${book.title}', '${book.description}', '${book.imageUrl}', '${book.rating}')">
+                        ${book.title}
+                    </div>
+                `;
+                bookListElement.appendChild(bookElement);
+            });
+        } else if (bookTitle) {
+
+            bookListElement.innerHTML = `
+                <div class="book">
+                    <div class="book-title">${bookTitle}</div>
+                    <img src="${bookImageUrl}" alt="${bookTitle}" class="book-image">
+                    <div class="book-description">${bookDescription}</div>
+                    <div class="book-rating">Rating: ${bookRating}</div>
+                </div>
+            `;
+        } else {
+            bookListElement.innerHTML = '<p>No book details available.</p>';
+        }
+
+        function viewBook(title, description, imageUrl, rating) {
+            const params = new URLSearchParams();
+            params.set('bookTitle', title);
+            params.set('bookDescription', description);
+            params.set('bookImageUrl', imageUrl);
+            params.set('bookRating', rating);
+            window.location.search = params.toString();
+        }
+    </script>
+</body>
+</html>
